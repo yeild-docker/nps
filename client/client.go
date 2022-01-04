@@ -3,12 +3,13 @@ package client
 import (
 	"bufio"
 	"bytes"
-	"ehang.io/nps-mux"
 	"net"
 	"net/http"
 	"strconv"
 	"sync"
 	"time"
+
+	nps_mux "ehang.io/nps-mux"
 
 	"github.com/astaxie/beego/logs"
 	"github.com/xtaci/kcp-go"
@@ -114,6 +115,11 @@ func (s *TRPClient) handleMain() {
 				go s.newUdpConn(localAddr, string(lAddr), string(pwd))
 			}
 		}
+	}
+	if WsCancel != nil {
+		WsCancel()
+		WsCancel = nil
+		WsCtx = nil
 	}
 	s.Close()
 }

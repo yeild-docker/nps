@@ -54,6 +54,10 @@ func NewPortMux(port int, managerHost string) *PortMux {
 	return pMux
 }
 
+func (pMux *PortMux) GetClientConn() chan *PortConn {
+	return pMux.clientConn
+}
+
 func (pMux *PortMux) Start() error {
 	// Port multiplexing is based on TCP only
 	tcpAddr, err := net.ResolveTCPAddr("tcp", "0.0.0.0:"+strconv.Itoa(pMux.port))

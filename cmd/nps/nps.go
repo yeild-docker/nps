@@ -39,6 +39,8 @@ func main() {
 		common.PrintVersion()
 		return
 	}
+	workhome, _ := os.Getwd()
+	os.Args[0] = workhome
 	if err := beego.LoadAppConfig("ini", filepath.Join(common.GetRunPath(), "conf", "nps.conf")); err != nil {
 		log.Fatalln("load config file error", err.Error())
 	}
@@ -197,6 +199,12 @@ func run() {
 	bridgePort, err := beego.AppConfig.Int("bridge_port")
 	if err != nil {
 		logs.Error("Getting bridge_port error", err)
+		os.Exit(0)
+	}
+	bridge_over_websocket := beego.AppConfig.String("bridge_over_websocket")
+	web_port, _ := beego.AppConfig.Int("web_port")
+	if len(bridge_over_websocket) > 0 && bridgePort != web_port {
+		logs.Error("Bridge_over must work when bridge_port is the same as web_port")
 		os.Exit(0)
 	}
 	logs.Info("the version of server is %s ,allow client core version to be %s", version.VERSION, version.GetVersion())

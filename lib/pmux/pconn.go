@@ -6,10 +6,11 @@ import (
 )
 
 type PortConn struct {
-	Conn     net.Conn
-	rs       []byte
-	readMore bool
-	start    int
+	Conn       net.Conn
+	rs         []byte
+	readMore   bool
+	start      int
+	eventClose chan bool
 }
 
 func newPortConn(conn net.Conn, rs []byte, readMore bool) *PortConn {
@@ -17,6 +18,15 @@ func newPortConn(conn net.Conn, rs []byte, readMore bool) *PortConn {
 		Conn:     conn,
 		rs:       rs,
 		readMore: readMore,
+	}
+}
+
+func NewPortConn(conn net.Conn, rs []byte, readMore bool, eventClose chan bool) *PortConn {
+	return &PortConn{
+		Conn:       conn,
+		rs:         rs,
+		readMore:   readMore,
+		eventClose: eventClose,
 	}
 }
 
@@ -47,6 +57,9 @@ func (pConn *PortConn) Write(b []byte) (n int, err error) {
 }
 
 func (pConn *PortConn) Close() error {
+	if pConn.eventClose != nil {
+		pConn.eventClose <- true
+	}
 	return pConn.Conn.Close()
 }
 

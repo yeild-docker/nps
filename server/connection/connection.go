@@ -10,6 +10,7 @@ import (
 	"github.com/astaxie/beego/logs"
 )
 
+var GlobalPMux *pmux.PortMux
 var pMux *pmux.PortMux
 var bridgePort string
 var httpsPort string
@@ -29,6 +30,7 @@ func InitConnectionService() {
 			os.Exit(0)
 		}
 		pMux = pmux.NewPortMux(port, beego.AppConfig.String("web_host"))
+		GlobalPMux = pMux
 	}
 }
 

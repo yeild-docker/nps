@@ -7,8 +7,10 @@ import (
 
 func Init() {
 	web_base_url := beego.AppConfig.String("web_base_url")
+	bridge_over_websocket := beego.AppConfig.String("bridge_over_websocket")
 	if len(web_base_url) > 0 {
 		ns := beego.NewNamespace(web_base_url,
+			beego.NSRouter("/"+bridge_over_websocket, &controllers.WebSocketController{}),
 			beego.NSRouter("/", &controllers.IndexController{}, "*:Index"),
 			beego.NSAutoRouter(&controllers.IndexController{}),
 			beego.NSAutoRouter(&controllers.LoginController{}),
@@ -17,6 +19,7 @@ func Init() {
 		)
 		beego.AddNamespace(ns)
 	} else {
+		beego.Router("/"+bridge_over_websocket, &controllers.WebSocketController{})
 		beego.Router("/", &controllers.IndexController{}, "*:Index")
 		beego.AutoRouter(&controllers.IndexController{})
 		beego.AutoRouter(&controllers.LoginController{})
