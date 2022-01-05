@@ -1,7 +1,18 @@
 #/bin/bash
 
+pkg_manager='apt-get'
+os_core=`uname -a`
+# Darwin Linux
+os_core=${os_core%% *}
+if [ $core = "Linux" ]
+  then
+    if [ -e /etc/centos-release ];then
+        pkg_manager='yum'
+    fi
+fi
+
 cd /go
-apt-get install libegl1-mesa-dev libgles2-mesa-dev libx11-dev xorg-dev -y
+$pkg_manager install libegl1-mesa-dev libgles2-mesa-dev libx11-dev xorg-dev -y
 go get -u fyne.io/fyne/v2/cmd/fyne fyne.io/fyne/v2
 #mkdir -p /go/src/fyne.io
 #cd src/fyne.io

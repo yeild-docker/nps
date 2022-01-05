@@ -2,8 +2,19 @@
 export VERSION=0.26.10
 export GOPROXY=direct
 
-sudo apt-get update
-sudo apt-get install gcc-mingw-w64-i686 gcc-multilib
+pkg_manager='apt-get'
+os_core=`uname -a`
+# Darwin Linux
+os_core=${os_core%% *}
+if [ $core = "Linux" ]
+  then
+    if [ -e /etc/centos-release ];then
+        pkg_manager='yum'
+    fi
+fi
+
+sudo $pkg_manager update
+sudo $pkg_manager install -y gcc-mingw-w64-i686 gcc-multilib
 env GOOS=windows GOARCH=386 CGO_ENABLED=1 CC=i686-w64-mingw32-gcc go build -ldflags "-s -w -extldflags -static -extldflags -static" -buildmode=c-shared -o npc_sdk.dll cmd/npc/sdk.go
 env GOOS=linux GOARCH=386 CGO_ENABLED=1 CC=gcc go build -ldflags "-s -w -extldflags -static -extldflags -static" -buildmode=c-shared -o npc_sdk.so cmd/npc/sdk.go
 tar -czvf npc_sdk.tar.gz npc_sdk.dll npc_sdk.so npc_sdk.h
@@ -149,8 +160,8 @@ tar -czvf windows_386_server.tar.gz conf/nps.conf conf/tasks.json conf/clients.j
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt-get update
-sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+sudo $pkg_manager update
+sudo $pkg_manager -y -o Dpkg::Options::="--force-confnew" install docker-ce
 docker --version
 docker run --rm -i -w /app -v $(pwd):/app -e ANDROID_HOME=/usr/local/android_sdk -e GOPROXY=direct lucor/fyne-cross:android-latest /app/build.android.sh
 git clone https://github.com/cnlh/spksrc.git ~/spksrc
