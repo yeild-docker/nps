@@ -4,7 +4,7 @@ pkg_manager='apt-get'
 os_core=`uname -a`
 # Darwin Linux
 os_core=${os_core%% *}
-if [ $core = "Linux" ]
+if [[ $core == "Linux" ]]
   then
     if [ -e /etc/centos-release ];then
         pkg_manager='yum'

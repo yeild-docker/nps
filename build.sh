@@ -1,4 +1,5 @@
 #/bash/sh
+# docker run -tid -v /mnt/workspace/yp/nps:/go/nps --name golang golang
 export VERSION=0.26.10
 export GOPROXY=direct
 
@@ -6,15 +7,18 @@ pkg_manager='apt-get'
 os_core=`uname -a`
 # Darwin Linux
 os_core=${os_core%% *}
-if [ $core = "Linux" ]
+if [[ $core == "Linux" ]]
   then
     if [ -e /etc/centos-release ];then
         pkg_manager='yum'
+    elif [ -e /etc/debian_version ];then
     fi
 fi
 
-sudo $pkg_manager update
-sudo $pkg_manager install -y gcc-mingw-w64-i686 gcc-multilib
+use_sudo='sudo'
+[[ `whoami` == 'root' ]] && use_sudo=''
+$use_sudo $pkg_manager update
+$use_sudo $pkg_manager install -y gcc-mingw-w64-i686 gcc-multilib
 env GOOS=windows GOARCH=386 CGO_ENABLED=1 CC=i686-w64-mingw32-gcc go build -ldflags "-s -w -extldflags -static -extldflags -static" -buildmode=c-shared -o npc_sdk.dll cmd/npc/sdk.go
 env GOOS=linux GOARCH=386 CGO_ENABLED=1 CC=gcc go build -ldflags "-s -w -extldflags -static -extldflags -static" -buildmode=c-shared -o npc_sdk.so cmd/npc/sdk.go
 tar -czvf npc_sdk.tar.gz npc_sdk.dll npc_sdk.so npc_sdk.h
@@ -159,9 +163,9 @@ CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags "-s -w -extldflags -stat
 tar -czvf windows_386_server.tar.gz conf/nps.conf conf/tasks.json conf/clients.json conf/hosts.json conf/server.key  conf/server.pem web/views web/static nps.exe
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo $pkg_manager update
-sudo $pkg_manager -y -o Dpkg::Options::="--force-confnew" install docker-ce
+$use_sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+$use_sudo $pkg_manager update
+$use_sudo $pkg_manager -y -o Dpkg::Options::="--force-confnew" install docker-ce
 docker --version
 docker run --rm -i -w /app -v $(pwd):/app -e ANDROID_HOME=/usr/local/android_sdk -e GOPROXY=direct lucor/fyne-cross:android-latest /app/build.android.sh
 git clone https://github.com/cnlh/spksrc.git ~/spksrc
