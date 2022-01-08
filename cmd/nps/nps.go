@@ -39,8 +39,8 @@ func main() {
 		common.PrintVersion()
 		return
 	}
-	workhome, _ := os.Getwd()
-	os.Args[0] = workhome
+	// workhome, _ := os.Getwd()
+	// os.Args[0] = workhome
 	if err := beego.LoadAppConfig("ini", filepath.Join(common.GetRunPath(), "conf", "nps.conf")); err != nil {
 		log.Fatalln("load config file error", err.Error())
 	}
