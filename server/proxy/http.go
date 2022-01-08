@@ -197,7 +197,7 @@ reset:
 					}
 					c.Write(b)
 					host.Flow.Add(0, int64(len(b)))
-					s.cache.Add(filepath.Join(host.Host, r.URL.Path), b)
+					s.cache.Add(filepath.Join(r.Host, r.URL.Path), b)
 				} else {
 					lenConn := conn.NewLenConn(c)
 					if err := resp.Write(lenConn); err != nil {
@@ -213,7 +213,7 @@ reset:
 	for {
 		//if the cache start and the request is in the cache list, return the cache
 		if s.useCache {
-			if v, ok := s.cache.Get(filepath.Join(host.Host, r.URL.Path)); ok {
+			if v, ok := s.cache.Get(filepath.Join(r.Host, r.URL.Path)); ok {
 				n, err := c.Write(v.([]byte))
 				if err != nil {
 					break
