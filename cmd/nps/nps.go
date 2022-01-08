@@ -59,7 +59,6 @@ func main() {
 	if common.IsWindows() {
 		logPath = strings.Replace(logPath, "\\", "\\\\", -1)
 	}
-	proxy.InitDynmicGateway()
 	// init service
 	options := make(service.KeyValue)
 	svcConfig := &service.Config{
@@ -194,6 +193,7 @@ func (p *nps) run() error {
 }
 
 func run() {
+	proxy.InitDynmicGateway()
 	routers.Init()
 	task := &file.Tunnel{
 		Mode: "webServer",

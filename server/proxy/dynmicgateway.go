@@ -29,7 +29,7 @@ var (
 func GenDynmicGatewayClient() *file.Client {
 	return &file.Client{
 		Id:     DYNAMIC_HOST_ID,
-		Status: false,
+		Status: true,
 		Remark: "Dynamic",
 		Alias:  "local",
 		Flow:   &file.Flow{},
