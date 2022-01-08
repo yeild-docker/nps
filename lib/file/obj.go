@@ -51,6 +51,7 @@ type Client struct {
 	ConfigConnAllow bool       //is allow connected by config file
 	MaxTunnelNum    int
 	Version         string
+	Alias           string //Alias name using dynmic proxy
 	sync.RWMutex
 }
 
@@ -69,6 +70,7 @@ func NewClient(vKey string, noStore bool, noDisplay bool) *Client {
 		NoStore:   noStore,
 		RWMutex:   sync.RWMutex{},
 		NoDisplay: noDisplay,
+		Alias:     "",
 	}
 }
 

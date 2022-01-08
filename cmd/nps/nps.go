@@ -15,6 +15,7 @@ import (
 	"ehang.io/nps/lib/version"
 	"ehang.io/nps/server"
 	"ehang.io/nps/server/connection"
+	"ehang.io/nps/server/proxy"
 	"ehang.io/nps/server/tool"
 	"ehang.io/nps/web/routers"
 
@@ -58,6 +59,7 @@ func main() {
 	if common.IsWindows() {
 		logPath = strings.Replace(logPath, "\\", "\\\\", -1)
 	}
+	proxy.InitDynmicGateway()
 	// init service
 	options := make(service.KeyValue)
 	svcConfig := &service.Config{
@@ -201,9 +203,8 @@ func run() {
 		logs.Error("Getting bridge_port error", err)
 		os.Exit(0)
 	}
-	bridge_over_websocket := beego.AppConfig.String("bridge_over_websocket")
 	web_port, _ := beego.AppConfig.Int("web_port")
-	if len(bridge_over_websocket) > 0 && bridgePort != web_port {
+	if len(proxy.S_DynmicGateway.Bridge_over_websocket) > 0 && bridgePort != web_port {
 		logs.Error("Bridge_over must work when bridge_port is the same as web_port")
 		os.Exit(0)
 	}

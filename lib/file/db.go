@@ -198,6 +198,9 @@ func (s *DbUtils) GetHost(start, length int, id int, search string) ([]*Host, in
 }
 
 func (s *DbUtils) DelClient(id int) error {
+	if cl, err := s.JsonDb.GetClient(id); err == nil {
+		s.JsonDb.AliasClients.Delete(cl.Alias)
+	}
 	s.JsonDb.Clients.Delete(id)
 	s.JsonDb.StoreClientsToJsonFile()
 	return nil
@@ -232,6 +235,7 @@ reset:
 		c.Flow = new(Flow)
 	}
 	s.JsonDb.Clients.Store(c.Id, c)
+	s.JsonDb.AliasClients.Store(c.Alias, c)
 	s.JsonDb.StoreClientsToJsonFile()
 	return nil
 }
@@ -264,6 +268,7 @@ func (s *DbUtils) VerifyUserName(username string, id int) (res bool) {
 
 func (s *DbUtils) UpdateClient(t *Client) error {
 	s.JsonDb.Clients.Store(t.Id, t)
+	s.JsonDb.AliasClients.Store(t.Alias, t)
 	if t.RateLimit == 0 {
 		t.Rate = rate.NewRate(int64(2 << 23))
 		t.Rate.Start()

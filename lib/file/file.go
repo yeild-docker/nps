@@ -28,6 +28,7 @@ type JsonDb struct {
 	Hosts            sync.Map
 	HostsTmp         sync.Map
 	Clients          sync.Map
+	AliasClients     sync.Map
 	RunPath          string
 	ClientIncreaseId int32  //client increased id
 	TaskIncreaseId   int32  //task increased id
@@ -68,6 +69,7 @@ func (s *JsonDb) LoadClientFromJsonFile() {
 		post.Rate.Start()
 		post.NowConn = 0
 		s.Clients.Store(post.Id, post)
+		s.AliasClients.Store(post.Alias, post)
 		if post.Id > int(s.ClientIncreaseId) {
 			s.ClientIncreaseId = int32(post.Id)
 		}
@@ -93,6 +95,15 @@ func (s *JsonDb) LoadHostFromJsonFile() {
 
 func (s *JsonDb) GetClient(id int) (c *Client, err error) {
 	if v, ok := s.Clients.Load(id); ok {
+		c = v.(*Client)
+		return
+	}
+	err = errors.New("未找到客户端")
+	return
+}
+
+func (s *JsonDb) GetClientByAlias(alias string) (c *Client, err error) {
+	if v, ok := s.AliasClients.Load(alias); ok {
 		c = v.(*Client)
 		return
 	}

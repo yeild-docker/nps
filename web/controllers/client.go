@@ -65,6 +65,7 @@ func (s *ClientController) Add() {
 				InletFlow:  0,
 				FlowLimit:  int64(s.GetIntNoErr("flow_limit")),
 			},
+			Alias: s.getEscapeString("alias"),
 		}
 		if err := file.GetDb().NewClient(t); err != nil {
 			s.AjaxErr(err.Error())
@@ -123,6 +124,7 @@ func (s *ClientController) Edit() {
 				c.MaxTunnelNum = s.GetIntNoErr("max_tunnel")
 			}
 			c.Remark = s.getEscapeString("remark")
+			c.Alias = s.getEscapeString("alias")
 			c.Cnf.U = s.getEscapeString("u")
 			c.Cnf.P = s.getEscapeString("p")
 			c.Cnf.Compress = common.GetBoolByStr(s.getEscapeString("compress"))

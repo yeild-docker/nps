@@ -287,6 +287,9 @@ func (s *IndexController) EditHost() {
 		if h, err := file.GetDb().GetHostById(id); err != nil {
 			s.error()
 		} else {
+			if s.GetIntNoErr("client_id", -1) == -1 {
+				s.AjaxErr("dynamic host, can't be edit")
+			}
 			if h.Host != s.getEscapeString("host") {
 				tmpHost := new(file.Host)
 				tmpHost.Host = s.getEscapeString("host")

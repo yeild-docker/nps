@@ -686,6 +686,10 @@
 		<zh-CN>留空表示不受限制</zh-CN>
 		<en-US>Empty means to be unrestricted</en-US>
 	</lang>
+	<lang id="word-alias">
+		<zh-CN>别名</zh-CN>
+		<en-US>Alias</en-US>
+	</lang>
 
 	<confirm>
 		<lang id="delete">
