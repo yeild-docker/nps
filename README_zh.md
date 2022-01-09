@@ -9,6 +9,17 @@
 
 nps是一款轻量级、高性能、功能强大的**内网穿透**代理服务器。目前支持**tcp、udp流量转发**，可支持任何**tcp、udp**上层协议（访问内网网站、本地支付接口调试、ssh访问、远程桌面，内网dns解析等等……），此外还**支持内网http代理、内网socks5代理**、**p2p等**，并带有功能强大的web管理端。
 
+## 功能添加说明
+  功能仅为满足个人实际需求，非Golang开发者，无法保证性能及稳定性。 <br/>
+1. 通过`websocket`连接`server`功能：添加配置项`bridge_over_websocket`，用于功能启用及指定`websocket`连接路径，`bridge_port`必须和`web_port`一致，客户端连接参数如下：<br/>
+  `server={web_host}:{web_port}{web_base_url}{bridge_over_websocket}`<br/>
+  `type=ws`
+2. 域名解析模块添加根据请求域名动态转发：基于泛域名实现，`client`配置中添加`Alias 别名`配置，添加配置项`dynamic_proxy_host`，用于功能启用及动态转发解析：<br/>
+   请求域名拼接格式：`{target-host}.{target-port}.{client-alias}.{dynamic_proxy_host}.{web_host}` <br/>
+   `target-host`：需要访问的目标host，replace `.` with `-`, use `local` with `client` itself <br/>
+   `target-port`：需要访问的目标端口，default `80` with `http` and `443` with `https` when not specified <br/>
+   `client-alias`：use `local` to handle the request with the server itself <br/>
+
 
 ## 背景
 ![image](https://github.com/ehang-io/nps/blob/master/image/web.png?raw=true)
