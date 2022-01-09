@@ -5,6 +5,7 @@ import (
 	"ehang.io/nps/lib/file"
 	"ehang.io/nps/lib/rate"
 	"ehang.io/nps/server"
+	"ehang.io/nps/server/dynmicgateway"
 	"github.com/astaxie/beego"
 )
 
@@ -106,6 +107,9 @@ func (s *ClientController) Edit() {
 			s.AjaxErr("client ID not found")
 			return
 		} else {
+			if id == dynmicgateway.DYNAMIC_CLIENT_ID {
+				s.AjaxErr("dynamic client, can't be edit")
+			}
 			if s.getEscapeString("web_username") != "" {
 				if s.getEscapeString("web_username") == beego.AppConfig.String("web_username") || !file.GetDb().VerifyUserName(s.getEscapeString("web_username"), c.Id) {
 					s.AjaxErr("web login username duplicate, please reset")
@@ -167,6 +171,9 @@ func (s *ClientController) ChangeStatus() {
 //删除客户端
 func (s *ClientController) Del() {
 	id := s.GetIntNoErr("id")
+	if id == dynmicgateway.DYNAMIC_CLIENT_ID {
+		s.AjaxErr("dynamic client, can't be delete")
+	}
 	if err := file.GetDb().DelClient(id); err != nil {
 		s.AjaxErr("delete error")
 	}

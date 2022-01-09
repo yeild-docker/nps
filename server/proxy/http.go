@@ -143,14 +143,6 @@ reset:
 		logs.Notice("the url %s %s %s can't be parsed!", r.URL.Scheme, r.Host, r.RequestURI)
 		return
 	}
-	addOrigin := s.addOrigin
-	changed, t_err := S_DynmicGateway.HandleHost(host, r)
-	if t_err != nil {
-		return
-	}
-	if changed {
-		addOrigin = true
-	}
 	if err := s.CheckFlowAndConnNum(host.Client); err != nil {
 		logs.Warn("client id %d, host id %d, error %s, when https connection", host.Client.Id, host.Id, err.Error())
 		return
@@ -197,7 +189,7 @@ reset:
 					}
 					c.Write(b)
 					host.Flow.Add(0, int64(len(b)))
-					s.cache.Add(filepath.Join(r.Host, r.URL.Path), b)
+					s.cache.Add(filepath.Join(host.Host, r.URL.Path), b)
 				} else {
 					lenConn := conn.NewLenConn(c)
 					if err := resp.Write(lenConn); err != nil {
@@ -213,7 +205,7 @@ reset:
 	for {
 		//if the cache start and the request is in the cache list, return the cache
 		if s.useCache {
-			if v, ok := s.cache.Get(filepath.Join(r.Host, r.URL.Path)); ok {
+			if v, ok := s.cache.Get(filepath.Join(host.Host, r.URL.Path)); ok {
 				n, err := c.Write(v.([]byte))
 				if err != nil {
 					break
@@ -229,7 +221,7 @@ reset:
 		}
 
 		//change the host and header and set proxy setting
-		common.ChangeHostAndHeader(r, host.HostChange, host.HeaderChange, c.Conn.RemoteAddr().String(), addOrigin)
+		common.ChangeHostAndHeader(r, host.HostChange, host.HeaderChange, c.Conn.RemoteAddr().String(), s.addOrigin)
 		logs.Trace("%s request, method %s, host %s, url %s, remote address %s, target %s", r.URL.Scheme, r.Method, r.Host, r.URL.Path, c.RemoteAddr().String(), lk.Host)
 		//write
 		lenConn = conn.NewLenConn(connClient)

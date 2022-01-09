@@ -13,6 +13,7 @@ import (
 	"ehang.io/nps/bridge"
 	"ehang.io/nps/lib/common"
 	"ehang.io/nps/lib/file"
+	"ehang.io/nps/server/dynmicgateway"
 	"ehang.io/nps/server/proxy"
 	"ehang.io/nps/server/tool"
 	"github.com/astaxie/beego"
@@ -252,7 +253,7 @@ func GetTunnel(start, length int, typeVal string, clientId int, search string) (
 				continue
 			}
 			cnt++
-			if _, ok := Bridge.Client.Load(v.Client.Id); v.Client.Id == -1 || ok {
+			if _, ok := Bridge.Client.Load(v.Client.Id); v.Client.Id == dynmicgateway.DYNAMIC_CLIENT_ID || ok {
 				v.Client.IsConnect = true
 			} else {
 				v.Client.IsConnect = false

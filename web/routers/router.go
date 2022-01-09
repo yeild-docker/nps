@@ -1,14 +1,14 @@
 package routers
 
 import (
-	"ehang.io/nps/server/proxy"
+	"ehang.io/nps/server/dynmicgateway"
 	"ehang.io/nps/web/controllers"
 	"github.com/astaxie/beego"
 )
 
 func Init() {
 	web_base_url := beego.AppConfig.String("web_base_url")
-	bridge_over_websocket := proxy.S_DynmicGateway.Bridge_over_websocket
+	bridge_over_websocket := dynmicgateway.Bridge_over_websocket
 	if len(web_base_url) > 0 {
 		ns := beego.NewNamespace(web_base_url,
 			beego.NSRouter("/"+bridge_over_websocket, &controllers.WebSocketController{}),

@@ -15,7 +15,7 @@ import (
 	"ehang.io/nps/lib/version"
 	"ehang.io/nps/server"
 	"ehang.io/nps/server/connection"
-	"ehang.io/nps/server/proxy"
+	"ehang.io/nps/server/dynmicgateway"
 	"ehang.io/nps/server/tool"
 	"ehang.io/nps/web/routers"
 
@@ -193,7 +193,7 @@ func (p *nps) run() error {
 }
 
 func run() {
-	proxy.InitDynmicGateway()
+	file.InitDynmicGateway()
 	routers.Init()
 	task := &file.Tunnel{
 		Mode: "webServer",
@@ -204,7 +204,7 @@ func run() {
 		os.Exit(0)
 	}
 	web_port, _ := beego.AppConfig.Int("web_port")
-	if len(proxy.S_DynmicGateway.Bridge_over_websocket) > 0 && bridgePort != web_port {
+	if len(dynmicgateway.Bridge_over_websocket) > 0 && bridgePort != web_port {
 		logs.Error("Bridge_over must work when bridge_port is the same as web_port")
 		os.Exit(0)
 	}

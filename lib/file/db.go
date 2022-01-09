@@ -358,6 +358,9 @@ func (s *DbUtils) GetInfoByHost(host string, r *http.Request) (h *Host, err erro
 			}
 		}
 	}
+	if h, err = HandleDynamicHost(h, r); err != nil {
+		return
+	}
 	if h != nil {
 		return
 	}

@@ -3,6 +3,7 @@ package controllers
 import (
 	"ehang.io/nps/lib/file"
 	"ehang.io/nps/server"
+	"ehang.io/nps/server/dynmicgateway"
 	"ehang.io/nps/server/tool"
 
 	"github.com/astaxie/beego"
@@ -235,6 +236,9 @@ func (s *IndexController) GetHost() {
 
 func (s *IndexController) DelHost() {
 	id := s.GetIntNoErr("id")
+	if id == dynmicgateway.DYNAMIC_HOST_ID {
+		s.AjaxErr("dynamic host, can't be delete")
+	}
 	if err := file.GetDb().DelHost(id); err != nil {
 		s.AjaxErr("delete error")
 	}
@@ -287,7 +291,7 @@ func (s *IndexController) EditHost() {
 		if h, err := file.GetDb().GetHostById(id); err != nil {
 			s.error()
 		} else {
-			if s.GetIntNoErr("client_id", -1) == -1 {
+			if id == dynmicgateway.DYNAMIC_HOST_ID {
 				s.AjaxErr("dynamic host, can't be edit")
 			}
 			if h.Host != s.getEscapeString("host") {
