@@ -58,7 +58,7 @@ func (dyn *DynmicGateway) ResolveHost(host string, scheme string) (dynamic bool,
 		}
 		target_host = p_hosts[0]
 	}
-	if len(target_host) > 0 {
+	if len(target_host) > 0 && target_host != "local" {
 		target_host = strings.Replace(target_host, "-", ".", -1)
 	} else {
 		target_host = "localhost"
