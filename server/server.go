@@ -284,7 +284,7 @@ func GetClientList(start, length int, search, sort, order string, clientId int) 
 func dealClientData() {
 	file.GetDb().JsonDb.Clients.Range(func(key, value interface{}) bool {
 		v := value.(*file.Client)
-		if vv, ok := Bridge.Client.Load(v.Id); ok {
+		if vv, ok := Bridge.Client.Load(v.Id); ok || v.Id == dynmicgateway.DYNAMIC_CLIENT_ID {
 			v.IsConnect = true
 			v.Version = vv.(*bridge.Client).Version
 		} else {
