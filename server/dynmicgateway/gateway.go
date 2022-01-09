@@ -1,6 +1,7 @@
 package dynmicgateway
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -50,10 +51,12 @@ func (dyn *DynmicGateway) ResolveHost(host string, scheme string) (dynamic bool,
 	client_alias = p_hosts[len(p_hosts)-1]
 	if len(p_hosts) == 2 {
 		if target_port, err = strconv.Atoi(p_hosts[0]); err != nil {
+			err = nil
 			target_host = p_hosts[0]
 		}
 	} else if len(p_hosts) == 3 {
 		if target_port, err = strconv.Atoi(p_hosts[1]); err != nil {
+			err = errors.New("Resolve host " + host + ", parse target_port failed: " + p_hosts[1])
 			return
 		}
 		target_host = p_hosts[0]

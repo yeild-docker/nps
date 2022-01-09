@@ -90,6 +90,7 @@ func HandleDynamicHost(host *Host, r *http.Request) (*Host, error) {
 	}
 	dynamic, client_alias, target_host, target_port, err := dynmicgateway.DynG.ResolveHost(request_host, r.URL.Scheme)
 	if err != nil {
+		logs.Warn("ResolveHost failed: %s", err)
 		return nil, err
 	}
 	if !dynamic {
