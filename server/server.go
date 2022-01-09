@@ -1,7 +1,6 @@
 package server
 
 import (
-	"ehang.io/nps/lib/version"
 	"errors"
 	"math"
 	"os"
@@ -9,6 +8,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"ehang.io/nps/lib/version"
 
 	"ehang.io/nps/bridge"
 	"ehang.io/nps/lib/common"
@@ -284,11 +285,14 @@ func GetClientList(start, length int, search, sort, order string, clientId int) 
 func dealClientData() {
 	file.GetDb().JsonDb.Clients.Range(func(key, value interface{}) bool {
 		v := value.(*file.Client)
-		if vv, ok := Bridge.Client.Load(v.Id); ok || v.Id == dynmicgateway.DYNAMIC_CLIENT_ID {
+		if vv, ok := Bridge.Client.Load(v.Id); ok {
 			v.IsConnect = true
 			v.Version = vv.(*bridge.Client).Version
 		} else {
 			v.IsConnect = false
+		}
+		if v.Id == dynmicgateway.DYNAMIC_CLIENT_ID {
+			v.IsConnect = true
 		}
 		v.Flow.InletFlow = 0
 		v.Flow.ExportFlow = 0
