@@ -14,7 +14,7 @@ nps是一款轻量级、高性能、功能强大的**内网穿透**代理服务�
 1. 通过`websocket`连接`server`功能：添加配置项`bridge_over_websocket`，用于功能启用及指定`websocket`连接路径，`bridge_port`必须和`web_port`一致，客户端连接参数如下：<br/>
   `server={web_host}:{web_port}{web_base_url}{bridge_over_websocket}`<br/>
   `type=ws`
-2. 域名解析模块添加根据请求域名动态转发：基于泛域名实现，`client`配置中添加`Alias 别名`配置，添加配置项`dynamic_proxy_host`，用于功能启用及动态转发解析：<br/>
+2. 域名解析模块添加根据请求域名动态转发：基于泛域名实现，需添加`{dynamic_proxy_host}.{web_host}`及`*.{dynamic_proxy_host}.{web_host}`两条主机记录到服务器，`client`配置中添加`Alias 别名`配置，添加配置项`dynamic_proxy_host`，用于功能启用及动态转发解析：<br/>
    请求域名拼接格式：`{target-host}.{target-port}.{client-alias}.{dynamic_proxy_host}.{web_host}` <br/>
    `target-host`：需要访问的目标host，replace `.` with `-`, use `local` with `client` itself <br/>
    `target-port`：需要访问的目标端口，default `80` with `http` and `443` with `https` when not specified <br/>
