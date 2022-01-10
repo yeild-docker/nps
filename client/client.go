@@ -116,11 +116,6 @@ func (s *TRPClient) handleMain() {
 			}
 		}
 	}
-	if WsCancel != nil {
-		WsCancel()
-		WsCancel = nil
-		WsCtx = nil
-	}
 	s.Close()
 }
 
@@ -307,9 +302,11 @@ func (s *TRPClient) closing() {
 	NowStatus = 0
 	if s.tunnel != nil {
 		_ = s.tunnel.Close()
+		CloseWebSocketConn(common.WORK_CHAN)
 	}
 	if s.signal != nil {
 		_ = s.signal.Close()
+		CloseWebSocketConn(common.WORK_MAIN)
 	}
 	if s.ticker != nil {
 		s.ticker.Stop()

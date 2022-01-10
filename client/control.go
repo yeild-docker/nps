@@ -2,7 +2,6 @@ package client
 
 import (
 	"bufio"
-	"context"
 	"encoding/base64"
 	"encoding/binary"
 	"errors"
@@ -28,7 +27,6 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/xtaci/kcp-go"
 	"golang.org/x/net/proxy"
-	"nhooyr.io/websocket"
 )
 
 func GetTaskStatus(path string) {
@@ -182,22 +180,16 @@ re:
 	goto re
 }
 
-var WsCtx context.Context
-var WsCancel context.CancelFunc
-
 // Create a new connection with the server and verify it
 func NewConn(tp string, vkey string, server string, connType string, proxyUrl string) (*conn.Conn, error) {
 	var err error
 	var connection net.Conn
 	var sess *kcp.UDPSession
 	if tp == "ws" || tp == "wss" {
-		WsCtx, WsCancel = context.WithTimeout(context.Background(), time.Hour*12)
-		var ws *websocket.Conn
-		ws, _, err = websocket.Dial(WsCtx, tp+"://"+server, nil)
-		if err == nil {
-			connection = websocket.NetConn(WsCtx, ws, websocket.MessageText)
-			tp = "tcp"
+		if connection, err = DialWebsocketConn(tp+"://"+server, connType); err != nil {
+			return nil, err
 		}
+		tp = "tcp"
 	} else if tp == "tcp" {
 		if proxyUrl != "" {
 			u, er := url.Parse(proxyUrl)
