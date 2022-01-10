@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/astaxie/beego/logs"
 	"nhooyr.io/websocket"
 )
 
@@ -41,16 +40,13 @@ func (s *WebsocketConn) WsHeartBeat(d time.Duration) {
 			goto stop
 		case <-t.C:
 		}
-		logs.Debug("%s Ping", s.ConnType)
 		err := s.Conn.Ping(s.WsCtx)
 		if err != nil {
 			goto stop
 		}
-		logs.Debug("%s Pong", s.ConnType)
 		t.Reset(d)
 	}
 stop:
-	logs.Debug("%s exited", s.ConnType)
 	CloseWebSocketConn(s.ConnType)
 }
 
@@ -86,6 +82,7 @@ func DialWebsocketConn(server string, connType string) (net.Conn, error) {
 	var ws *websocket.Conn
 	ws, _, err := websocket.Dial(wsCtx, server, nil)
 	if err != nil {
+		wsCancel()
 		return nil, err
 	}
 	netConn := websocket.NetConn(wsCtx, ws, websocket.MessageText)
