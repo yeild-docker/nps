@@ -166,7 +166,7 @@ tar -czvf $releases_dir/windows_amd64_server.tar.gz conf/nps.conf conf/tasks.jso
 CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -ldflags "-s -w -extldflags -static -extldflags -static" ./cmd/nps/nps.go
 tar -czvf $releases_dir/windows_386_server.tar.gz conf/nps.conf conf/tasks.json conf/clients.json conf/hosts.json conf/server.key  conf/server.pem web/views web/static nps.exe
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | $use_sudo apt-key add -
 $use_sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 $use_sudo $pkg_manager update
 $use_sudo $pkg_manager -y -o Dpkg::Options::="--force-confnew" install docker-ce
