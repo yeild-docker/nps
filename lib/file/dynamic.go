@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
 
+	"ehang.io/nps/lib/common"
 	"ehang.io/nps/server/dynmicgateway"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 )
 
@@ -56,6 +59,24 @@ func GenDynmicGatewayHost() *Host {
 }
 
 func InitDynmicGateway() {
+	if opened, _ := beego.AppConfig.Bool("web_open_ssl"); opened {
+		web_key_file := beego.AppConfig.String("web_key_file")
+		if len(web_key_file) > 0 && !strings.HasPrefix(web_key_file, "/") {
+			beego.AppConfig.Set("web_key_file", filepath.Join(common.GetRunPath(), web_key_file))
+		}
+		web_cert_file := beego.AppConfig.String("web_cert_file")
+		if len(web_cert_file) > 0 && !strings.HasPrefix(web_cert_file, "/") {
+			beego.AppConfig.Set("web_cert_file", filepath.Join(common.GetRunPath(), web_cert_file))
+		}
+	}
+	https_default_cert_file := beego.AppConfig.String("https_default_cert_file")
+	if len(https_default_cert_file) > 0 && !strings.HasPrefix(https_default_cert_file, "/") {
+		beego.AppConfig.Set("https_default_cert_file", filepath.Join(common.GetRunPath(), https_default_cert_file))
+	}
+	https_default_key_file := beego.AppConfig.String("https_default_key_file")
+	if len(https_default_key_file) > 0 && !strings.HasPrefix(https_default_key_file, "/") {
+		beego.AppConfig.Set("https_default_key_file", filepath.Join(common.GetRunPath(), https_default_key_file))
+	}
 	dynmicgateway.InitDynmicGateway()
 	var err error
 	if len(dynmicgateway.Dynamic_proxy_host) > 0 {
@@ -117,7 +138,9 @@ func HandleDynamicHost(host *Host, r *http.Request) (*Host, error) {
 		}
 		h.Client = GenDynmicGatewayClient()
 	} else {
-		h.Client.Cnf.Crypt = !h.Target.LocalProxy
+		DeepCopy(h.Client, h.Client)
+		h.Client.Cnf.U = ""
+		h.Client.Cnf.P = ""
 		h.Client.Cnf.Compress = !h.Target.LocalProxy
 	}
 	if isNewHost {
